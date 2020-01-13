@@ -26,6 +26,8 @@ void setup() {
 int clearMarbles = 0;
 int blackMarbles = 0;
 int sortErrors = 0;
+int lightThreshold = 350;
+int presenceThreshold = 2200;
 
 void resetMachine(){
   while (abs(accel.getCalculatedX())>0.08){
@@ -60,10 +62,7 @@ void showTotals() {
 }
 void checkSort(bool color) {
   while (abs(accel.getCalculatedX()) < 0.3) {
-    oled.clear(PAGE);
-    oled.setCursor(0, 0);
-    oled.print("waiting");
-    oled.display();
+    
   }
   if (color == false) {
     if (accel.getCalculatedX() < 0) {
@@ -104,10 +103,13 @@ void checkSort(bool color) {
   }
 }
 void measureAmbLight() {
-  if (proximitySensor.getAmbient() < 150) {
+  delay(3000);
+  if (proximitySensor.getAmbient() < lightThreshold) {
     oled.clear(PAGE);
     oled.setCursor(0, 0);
-    oled.print("Black Marble");
+    oled.print("Solid");
+    oled.setCursor(0, oled.getFontHeight());
+    oled.print("Marble");
     oled.display();
     delay(2000);
     oled.clear(PAGE);
@@ -120,7 +122,9 @@ void measureAmbLight() {
   } else {
     oled.clear(PAGE);
     oled.setCursor(0, 0);
-    oled.print("Clear Marble");
+    oled.print("Clear");
+    oled.setCursor(0, oled.getFontHeight());
+    oled.print("Marble");
     oled.display();
     delay(2000);
     oled.clear(PAGE);
@@ -135,8 +139,10 @@ void measureAmbLight() {
 void loop() {
   // put your main code here, to run repeatedly:
   oled.setCursor(0, 0);
-  if (proximitySensor.getProximity() > 25) {
-    oled.print("Marble Detected");
+  if (proximitySensor.getProximity() > presenceThreshold) {
+    oled.print("Marble");
+    oled.setCursor(0, oled.getFontHeight());
+    oled.print("Detected");
     oled.display();
     delay(1000);
     measureAmbLight();
